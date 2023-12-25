@@ -1,0 +1,51 @@
+name: Test
+on:
+  push:
+    branches:
+      - master
+      - dev/autoconspect
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8.10'
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: false
+          installer-parallel: true
+
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+        run: poetry install
+
+      - name: Lint with Black
+        run: poetry run black .
+
+      - name: Lint with isort
+        run: poetry run isort .
+
+      - name: Lint with pylint
+        run: poetry run pylint src/ --fail-under=7.5 --rcfile=.pylintrc --output-format=colorized || exit 1
+
+      - name: Type check with mypy
+        run: poetry run mypy .
