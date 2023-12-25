@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - master
-      - dev/autoconspect
+      - dev
+      - 'dev/**'
   pull_request:
     types: [opened, synchronize]
 
@@ -38,11 +39,11 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install
 
-      - name: Lint with Black
-        run: poetry run black .
-
       - name: Lint with isort
         run: poetry run isort .
+
+      - name: Lint with Black
+        run: poetry run black .
 
       - name: Lint with pylint
         run: poetry run pylint src/ --fail-under=7.5 --rcfile=.pylintrc --output-format=colorized || exit 1
