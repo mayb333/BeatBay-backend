@@ -6,6 +6,7 @@ from loguru import logger
 from src.auth.base_config import auth_backend, fastapi_users
 from src.auth.schemas import UserCreate, UserRead
 from src.beats.router import router as router_beats
+from src.users.router import router as router_users
 
 # logger.add("logs/app_logs.log", format="{time} {level} {message}", level="INFO")
 logger.info("Started the app")
@@ -42,3 +43,4 @@ app.include_router(
 
 
 app.include_router(router_beats)
+app.include_router(router_users)
