@@ -203,3 +203,47 @@ async def like_beat(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while liking the beat.",
         )
+
+
+@router.post("/{user_id}/add_to_cart/{beat_id}")
+async def add_beat_to_cart(
+    user_id: int,
+    beat_id: int,
+    current_user: User = Depends(current_user),  # Get current user
+    session: AsyncSession = Depends(get_async_session),
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to perform action for this user"
+        )
+
+    try:
+        # Check if the beat exists
+        beat_exists = await session.execute(
+            select(beats).where(beats.c.beat_id == beat_id)
+        )
+        if not beat_exists.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Beat not found")
+
+        # Check if the user already have the beat in his cart
+        beat_in_cart = await session.execute(
+            select(carts).where(
+                and_(carts.c.user_id == user_id, carts.c.beat_id == beat_id)
+            )
+        )
+        if beat_in_cart.scalar_one_or_none():
+            raise HTTPException(
+                status_code=400, detail="Already added this beat to cart"
+            )
+
+        # Add beat to cart
+        new_beat_in_cart = insert(carts).values(user_id=user_id, beat_id=beat_id)
+        await session.execute(new_beat_in_cart)
+        await session.commit()
+
+        return {"message": "Beat added to cart successfully"}
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while adding the beat to cart.",
+        )
