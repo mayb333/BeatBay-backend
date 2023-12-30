@@ -46,7 +46,9 @@ users = Table(
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    user_id = Column(Integer, primary_key=True)
+    __tablename__ = "users"
+
+    id = Column("user_id", Integer, primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)
     profile_photo = Column(String)
