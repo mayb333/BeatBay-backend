@@ -3,9 +3,7 @@ from datetime import datetime
 from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, MetaData, String, Table
 
 from src.auth.models import users
-
-metadata = MetaData()
-
+from src.database import metadata
 
 beats = Table(
     "beats",

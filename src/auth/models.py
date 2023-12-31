@@ -13,10 +13,7 @@ from sqlalchemy import (
     Table,
 )
 
-from src.database import Base
-
-metadata = MetaData()
-
+from src.database import Base, metadata
 
 roles = Table(
     "roles",
