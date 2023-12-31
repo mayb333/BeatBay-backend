@@ -29,4 +29,4 @@ fastapi_users = FastAPIUsers[User, int](
     [auth_backend],
 )
 
-current_user = fastapi_users.current_user()
+get_current_user = fastapi_users.current_user()

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import and_, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.base_config import current_user
+from src.auth.base_config import get_current_user
 from src.auth.models import User, users
 from src.beats.models import beats
 from src.beats.schemas import TrackCard
@@ -121,7 +121,7 @@ async def get_user_cart(
 
 
 @router.get("/{user_id}/liked", response_model=List[TrackCardForLiked])
-async def get_user_cart(
+async def get_user_liked(
     user_id: int, session: AsyncSession = Depends(get_async_session)
 ):
     try:
@@ -167,7 +167,7 @@ async def get_user_cart(
 async def like_beat(
     user_id: int,
     beat_id: int,
-    current_user: User = Depends(current_user),  # Get current user
+    current_user: User = Depends(get_current_user),  # Get current user
     session: AsyncSession = Depends(get_async_session),
 ):
     if current_user.id != user_id:
@@ -209,7 +209,7 @@ async def like_beat(
 async def add_beat_to_cart(
     user_id: int,
     beat_id: int,
-    current_user: User = Depends(current_user),  # Get current user
+    current_user: User = Depends(get_current_user),  # Get current user
     session: AsyncSession = Depends(get_async_session),
 ):
     if current_user.id != user_id:
