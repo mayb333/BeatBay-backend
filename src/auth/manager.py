@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin, exceptions, models, schemas
@@ -41,6 +41,27 @@ class UserManager(IntegerIDMixin, BaseUserManager[User, int]):
         await self.on_after_register(created_user, request)
 
         return created_user
+
+    async def validate_password(
+        self, password: str, user: Union[schemas.UC, models.UP]
+    ) -> None:
+        """
+        Validate a password.
+
+        *You should overload this method to add your own validation logic.*
+
+        :param password: The password to validate.
+        :param user: The user associated to this password.
+        :raises InvalidPasswordException: The password is invalid.
+        :return: None if the password is valid.
+        """
+        if len(password) < 3:
+            # raise InvalidPasswordException("Password should be at least 3 characters long")
+            raise exceptions.InvalidPasswordException(
+                "Password should be at least 3 characters"
+            )
+
+        return
 
 
 async def get_user_manager(user_db=Depends(get_user_db)):
