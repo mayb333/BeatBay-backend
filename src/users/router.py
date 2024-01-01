@@ -1,10 +1,11 @@
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import and_, insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.auth.models import users
+from src.auth.base_config import get_current_user
+from src.auth.models import User, users
 from src.beats.models import beats
 from src.beats.schemas import TrackCard
 from src.database import get_async_session
@@ -120,7 +121,7 @@ async def get_user_cart(
 
 
 @router.get("/{user_id}/liked", response_model=List[TrackCardForLiked])
-async def get_user_cart(
+async def get_user_liked(
     user_id: int, session: AsyncSession = Depends(get_async_session)
 ):
     try:
@@ -159,4 +160,90 @@ async def get_user_cart(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while retrieving liked tracks.",
+        )
+
+
+@router.post("/{user_id}/like/{beat_id}")
+async def like_beat(
+    user_id: int,
+    beat_id: int,
+    current_user: User = Depends(get_current_user),  # Get current user
+    session: AsyncSession = Depends(get_async_session),
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to perform action for this user"
+        )
+
+    try:
+        # Check if the beat exists
+        beat_exists = await session.execute(
+            select(beats).where(beats.c.beat_id == beat_id)
+        )
+        if not beat_exists.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Beat not found")
+
+        # Check if the user already liked the beat
+        like_exists = await session.execute(
+            select(likes).where(
+                and_(likes.c.user_id == user_id, likes.c.beat_id == beat_id)
+            )
+        )
+        if like_exists.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail="Already liked this beat")
+
+        # Add like
+        new_like = insert(likes).values(user_id=user_id, beat_id=beat_id)
+        await session.execute(new_like)
+        await session.commit()
+
+        return {"message": "Beat liked successfully"}
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while liking the beat.",
+        )
+
+
+@router.post("/{user_id}/add_to_cart/{beat_id}")
+async def add_beat_to_cart(
+    user_id: int,
+    beat_id: int,
+    current_user: User = Depends(get_current_user),  # Get current user
+    session: AsyncSession = Depends(get_async_session),
+):
+    if current_user.id != user_id:
+        raise HTTPException(
+            status_code=403, detail="Not authorized to perform action for this user"
+        )
+
+    try:
+        # Check if the beat exists
+        beat_exists = await session.execute(
+            select(beats).where(beats.c.beat_id == beat_id)
+        )
+        if not beat_exists.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Beat not found")
+
+        # Check if the user already have the beat in his cart
+        beat_in_cart = await session.execute(
+            select(carts).where(
+                and_(carts.c.user_id == user_id, carts.c.beat_id == beat_id)
+            )
+        )
+        if beat_in_cart.scalar_one_or_none():
+            raise HTTPException(
+                status_code=400, detail="Already added this beat to cart"
+            )
+
+        # Add beat to cart
+        new_beat_in_cart = insert(carts).values(user_id=user_id, beat_id=beat_id)
+        await session.execute(new_beat_in_cart)
+        await session.commit()
+
+        return {"message": "Beat added to cart successfully"}
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while adding the beat to cart.",
         )

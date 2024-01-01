@@ -8,15 +8,11 @@ from sqlalchemy import (
     Column,
     ForeignKey,
     Integer,
-    MetaData,
     String,
     Table,
 )
 
-from src.database import Base
-
-metadata = MetaData()
-
+from src.database import Base, metadata
 
 roles = Table(
     "roles",
@@ -46,7 +42,9 @@ users = Table(
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    user_id = Column(Integer, primary_key=True)
+    __tablename__ = "users"
+
+    id = Column("user_id", Integer, primary_key=True)
     email = Column(String, nullable=False)
     username = Column(String, nullable=False)
     profile_photo = Column(String)

@@ -1,12 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, MetaData, Table
+from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, Table
 
 from src.auth.models import users
 from src.beats.models import beats
-
-metadata = MetaData()
-
+from src.database import metadata
 
 likes = Table(
     "likes",
