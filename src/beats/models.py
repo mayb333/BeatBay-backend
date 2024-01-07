@@ -27,8 +27,8 @@ class Beat(Base):
 
     user = relationship("User", back_populates="beats")
     options = relationship("PurchaseOption", back_populates="beat")
-    likes = relationship("Like", back_populates="beat")
-    plays = relationship("BeatPlay", backref="beat")
+    beat_likes = relationship("Like", back_populates="beat")
+    beat_plays = relationship("BeatPlay", back_populates="beat")
 
 
 class PurchaseOption(Base):

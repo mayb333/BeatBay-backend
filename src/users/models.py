@@ -10,23 +10,23 @@ class Like(Base):
     __tablename__ = "like"
 
     like_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
-    beat_id = Column(Integer, ForeignKey("beat.beat_id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    beat_id = Column(Integer, ForeignKey("beat.beat_id"))
     added_at = Column(TIMESTAMP, default=datetime.utcnow)
 
-    user = relationship("User", backref="likes")
-    beat = relationship("Beat", backref="likes")
+    user = relationship("User", back_populates="likes")
+    beat = relationship("Beat", back_populates="beat_likes")
 
 
 class Cart(Base):
     __tablename__ = "cart"
 
     item_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
-    beat_id = Column(Integer, ForeignKey("beat.beat_id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.user_id"))
+    beat_id = Column(Integer, ForeignKey("beat.beat_id"))
     added_at = Column(TIMESTAMP, default=datetime.utcnow)
 
-    user = relationship("User", backref="cart")
+    user = relationship("User", back_populates="cart")
 
 
 class BeatPlay(Base):
@@ -37,5 +37,5 @@ class BeatPlay(Base):
     beat_id = Column(Integer, ForeignKey("beat.beat_id"))
     played_at = Column(TIMESTAMP, default=datetime.utcnow)
 
-    user = relationship("User", backref="plays")
-    beat = relationship("Beat", backref="plays")
+    user = relationship("User", back_populates="plays")
+    beat = relationship("Beat", back_populates="beat_plays")

@@ -11,8 +11,11 @@ class TrackCard(BaseModel):
     title: str
     price: str
     bpm: int
+    mood: str
+    genre: str
+    tags: str
     image: str
-    audio_file: str
+    mp3_file: str
     added_at: datetime
     likes_count: int
     plays_count: int

@@ -36,5 +36,5 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     role = relationship("Role", back_populates="user")
     beats = relationship("Beat", back_populates="user")
     cart = relationship("Cart", back_populates="user")
-    likes = relationship("Like", backref="user")
-    plays = relationship("BeatPlay", backref="user")
+    likes = relationship("Like", back_populates="user")
+    plays = relationship("BeatPlay", back_populates="user")
