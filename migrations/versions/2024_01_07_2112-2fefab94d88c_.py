@@ -1,8 +1,8 @@
-"""Initial migration. Creating tables
+"""Initial commit. Created tables
 
-Revision ID: 4ace0258a81e
+Revision ID: 2fefab94d88c
 Revises:
-Create Date: 2024-01-07 01:15:33.312390
+Create Date: 2024-01-07 21:12:37.670441
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "4ace0258a81e"
+revision: str = "2fefab94d88c"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -57,7 +57,9 @@ def upgrade() -> None:
         sa.Column("genre", sa.String(), nullable=True),
         sa.Column("tags", sa.String(), nullable=True),
         sa.Column("image", sa.String(), nullable=True),
-        sa.Column("audio_file", sa.String(), nullable=False),
+        sa.Column("mp3_file", sa.String(), nullable=False),
+        sa.Column("wav_file", sa.String(), nullable=True),
+        sa.Column("stems_file", sa.String(), nullable=True),
         sa.Column("added_at", sa.TIMESTAMP(), nullable=True),
         sa.Column("likes_count", sa.Integer(), nullable=False),
         sa.Column("plays_count", sa.Integer(), nullable=False),

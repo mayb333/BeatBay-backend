@@ -16,9 +16,11 @@ class Beat(Base):
     bpm = Column(Integer, nullable=False)
     mood = Column(String, nullable=True)  # 'happy,sad,energetic'
     genre = Column(String, nullable=True)  # 'hip-hop,rock'
-    tags = Column(String, nullable=True)  # 'chill,happy,sad'
+    tags = Column(String, nullable=True)  # 'toxis type beat,travis scott'
     image = Column(String, nullable=True)
-    audio_file = Column(String, nullable=False)
+    mp3_file = Column(String, nullable=False)
+    wav_file = Column(String)
+    stems_file = Column(String)
     added_at = Column(TIMESTAMP, default=datetime.utcnow)
     likes_count = Column(Integer, nullable=False, default=0)
     plays_count = Column(Integer, nullable=False, default=0)
