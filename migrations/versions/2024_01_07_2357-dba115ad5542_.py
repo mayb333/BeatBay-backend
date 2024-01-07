@@ -1,8 +1,8 @@
-"""Initial commit. Created tables
+"""Initial commit. Create tables
 
-Revision ID: 2fefab94d88c
+Revision ID: dba115ad5542
 Revises:
-Create Date: 2024-01-07 21:12:37.670441
+Create Date: 2024-01-07 23:57:00.033518
 
 """
 from typing import Sequence, Union
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "2fefab94d88c"
+revision: str = "dba115ad5542"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -88,8 +88,8 @@ def upgrade() -> None:
     op.create_table(
         "cart",
         sa.Column("item_id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("beat_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("beat_id", sa.Integer(), nullable=True),
         sa.Column("added_at", sa.TIMESTAMP(), nullable=True),
         sa.ForeignKeyConstraint(
             ["beat_id"],
@@ -99,13 +99,13 @@ def upgrade() -> None:
             ["user_id"],
             ["user.user_id"],
         ),
-        sa.PrimaryKeyConstraint("item_id", "user_id", "beat_id"),
+        sa.PrimaryKeyConstraint("item_id"),
     )
     op.create_table(
         "like",
         sa.Column("like_id", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("beat_id", sa.Integer(), nullable=False),
+        sa.Column("user_id", sa.Integer(), nullable=True),
+        sa.Column("beat_id", sa.Integer(), nullable=True),
         sa.Column("added_at", sa.TIMESTAMP(), nullable=True),
         sa.ForeignKeyConstraint(
             ["beat_id"],
@@ -115,7 +115,7 @@ def upgrade() -> None:
             ["user_id"],
             ["user.user_id"],
         ),
-        sa.PrimaryKeyConstraint("like_id", "user_id", "beat_id"),
+        sa.PrimaryKeyConstraint("like_id"),
     )
     op.create_table(
         "purchase_option",
